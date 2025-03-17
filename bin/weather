@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+require 'thor'
+require_relative '../lib/weather'
+
+class WeatherCLI < Thor
+  desc "check CITY", "Check weather for the specific city"
+  def check(city)
+    WeatherFetcher.new(city).fetch
+  end
+end
+
+WeatherCLI.start(ARGV)
