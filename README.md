@@ -56,6 +56,27 @@ bundle exec bin/weather check CITY_NAME
 
 The output will display the 5-day forecast with temperature, weather conditions, and timestamps in your local timezone.
 
+## Configuration System
+
+The application uses a flexible configuration system powered by the `dry-configurable` gem:
+
+- **Environment-specific configuration**: Different settings for development and production
+- **Configuration hierarchy**: Default values can be overridden by YAML files and environment variables
+- **Centralized configuration**: All settings managed in one place
+
+### Available Configuration Options
+
+- `api_endpoint`: The OpenWeatherMap API endpoint URL
+- `cache_ttl`: Time-to-live for cached data in seconds
+- `concurrency`: Maximum number of concurrent requests
+- `log_level`: Logging verbosity (debug, info, warn, error)
+
+### Switching Environments
+
+```bash
+RACK_ENV=production ./bin/weather check London
+```
+
 ## Architecture
 
 The application follows a simple effective architecture:
