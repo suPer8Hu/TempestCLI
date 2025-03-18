@@ -7,7 +7,36 @@ require_relative '../lib/weather'
 class WeatherCLI < Thor
   desc "check CITY", "Check weather for the specific city"
   def check(city)
-    WeatherFetcher.new(city).fetch
+    fetcher = WeatherFetcher.new(city)
+    fetcher.clear_cache if options[:fresh]
+    data = fetcher.fetch
+    fetcher.handle_response(data)
+  end
+
+  desc "clear [CITY]", "Clear cache for a city or all cities"
+  def clear(city = nil)
+    if city
+      puts "Clear cache for #{city}..."
+      WeatherFetcher.new(city).clear_cache
+    else
+      puts "Clear all cache..."
+      Weather::Cache.new.clear
+    end
+    puts "✅ Cache has been cleaned".green
+  end
+  
+  desc "cache_info", "Show cache statistics"
+  def cache_info
+    stats = Weather::Cache.new.stats
+    puts "📊 Cache stats".blue
+    puts "Num of cache keys: #{stats[:keys]}".cyan
+    puts "Mem usage: #{stats[:memory]}".cyan
+    if stats[:uptime].is_a?(String)
+        uptime_seconds = stats[:uptime].to_i
+        puts "Redis runtime: #{(uptime_seconds / 60.0).round(1)} min".cyan
+    else
+        puts "Redis runtime: #{(stats[:uptime] / 60.0).round(1)} min".cyan
+    end
   end
 end
 

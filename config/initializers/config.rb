@@ -11,6 +11,10 @@ module WeatherConfig
   setting :concurrency, default: 5
   setting :log_level, default: 'info'
 
+  # cache config
+  setting :redis_url, default: 'redis://localhost:6379/0'
+  setting :redis_max_connections, default: 5
+
   # env config
   env = ENV.fetch('RACK_ENV', 'development')
   config_path = File.expand_path("../environments/#{env}.yml", __dir__)
