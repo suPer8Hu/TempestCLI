@@ -5,8 +5,16 @@ GEM
     bigdecimal (3.1.9)
     coderay (1.1.3)
     colorize (1.1.0)
+    concurrent-ruby (1.3.5)
     csv (3.3.2)
     dotenv (3.1.7)
+    dry-configurable (1.3.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-core (1.1.0)
+      concurrent-ruby (~> 1.0)
+      logger
+      zeitwerk (~> 2.6)
     httparty (0.22.0)
       csv
       mini_mime (>= 1.0.0)
@@ -14,6 +22,7 @@ GEM
     json (2.10.2)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
+    logger (1.6.6)
     method_source (1.1.0)
     mini_mime (1.1.5)
     multi_xml (0.7.1)
@@ -46,6 +55,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    zeitwerk (2.6.18)
 
 PLATFORMS
   arm64-darwin-24
@@ -54,6 +64,7 @@ PLATFORMS
 DEPENDENCIES
   colorize
   dotenv
+  dry-configurable (~> 1.3)
   httparty
   pry
   rubocop

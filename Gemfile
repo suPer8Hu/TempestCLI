@@ -9,8 +9,9 @@ gem "dotenv"
 gem "thor"           
 gem "colorize"       
 
-# 开发依赖
+# development dependencies  
 group :development do
   gem "pry"          
   gem "rubocop"      
 end
+gem "dry-configurable", "~> 1.3"

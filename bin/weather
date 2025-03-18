@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
-require 'thor'
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
 require_relative '../lib/weather'
 
 class WeatherCLI < Thor
