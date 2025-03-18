@@ -14,4 +14,5 @@ group :development do
   gem "pry"          
   gem "rubocop"      
 end
-gem "dry-configurable", "~> 1.3"
+gem 'dry-configurable', '~> 1.0'
+gem 'dry-core', '~> 1.0'

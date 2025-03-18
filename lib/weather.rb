@@ -3,16 +3,17 @@ require 'colorize'
 require 'date'
 require 'time'
 require_relative '../config/initializers/api_keys'
+require_relative '../config/initializers/config.rb'
 
 class WeatherFetcher
-  API_BASE = "https://api.openweathermap.org/data/2.5/forecast"
+#   API_BASE = "https://api.openweathermap.org/data/2.5/forecast"
 
   def initialize(city_name_or_id, use_id: false)
     @query = use_id ? { id: city_name_or_id } : { q: city_name_or_id }
   end
 
   def fetch
-    response = HTTParty.get(API_BASE, query: @query.merge(
+    response = HTTParty.get(WeatherConfig.config.api_endpoint, query: @query.merge(
     appid: ENV['OPENWEATHER_API_KEY'],
     units: 'metric'
     ))
