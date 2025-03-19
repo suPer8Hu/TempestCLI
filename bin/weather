@@ -3,6 +3,7 @@ require 'rubygems'
 require 'bundler/setup'
 Bundler.require(:default)
 require_relative '../lib/weather'
+require_relative '../lib/batch_fetcher'
 
 class WeatherCLI < Thor
   desc "check CITY", "Check weather for the specific city"
@@ -37,6 +38,49 @@ class WeatherCLI < Thor
     else
         puts "Redis runtime: #{(stats[:uptime] / 60.0).round(1)} min".cyan
     end
+  end
+
+
+  desc "batch CITIES...", "Batch and concurrently check the weather of multiple cities"
+  option :fresh, type: :boolean, desc: "Force cache refresh to get the latest data"
+  def batch(*cities)
+    if cities.empty?
+      puts "❌ Please specify at least one city".red
+      return
+    end
+    
+    # If a force refresh is needed 
+    if options[:fresh]
+      cities.each do |city|
+        Weather::Cache.new.clear(generate_cache_key(city))
+      end
+    end
+    
+    puts "🚀 Start a batch query for weather in #{cities.size} cities...".blue
+    start_time = Time.now
+    
+    fetcher = BatchFetcher.new(cities)
+    results = fetcher.fetch_all
+    
+    puts "\n⏱️ Searching time cost: #{(Time.now - start_time).round(2)}sec".yellow
+    puts "🌍 Inquiry results:".green
+    
+    results.each do |city, data|
+      puts "\n#{'=' * 50}".blue
+      puts "📍 #{city}:".green
+      
+      if data.is_a?(Hash) && (data['cod'] == '200' || data['cod'] == 200)
+        WeatherFetcher.new(city).send(:display_success, data)
+      else
+        puts "❌ Failed to gather weather information: #{data['error'] || data['message'] || 'unknown error'}".red
+      end
+    end
+  end
+  
+  private
+  
+  def generate_cache_key(city)
+    "q=#{city}|#{WeatherConfig.config.api_endpoint}"
   end
 end
 

@@ -17,3 +17,5 @@ end
 gem 'dry-configurable', '~> 1.0'
 gem 'dry-core', '~> 1.0'
 gem "redis", "~> 5.4"
+
+gem "typhoeus", "~> 1.4"
