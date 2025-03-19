@@ -1,0 +1,25 @@
+temperature:
+  max: 33.0   
+  min: 0.0    
+
+precipitation:
+  warning: 10.0 
+  danger: 25.0   
+
+wind:
+  strong: 10.8   # (m/s)
+  storm: 17.2   
+
+visibility:
+  fog: 1000      # (m)
+
+notification:
+  email:
+    from: "steviehu95@gmail.com"
+    smtp:
+      address: "smtp.gmail.com"
+      port: 587
+      user_name: "steviehu95@gmail.com"  
+      # Password is loaded from ENV['EMAIL_PASSWORD']  
+      authentication: "plain"
+      enable_starttls_auto: true

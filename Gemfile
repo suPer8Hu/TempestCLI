@@ -19,3 +19,9 @@ gem 'dry-core', '~> 1.0'
 gem "redis", "~> 5.4"
 
 gem "typhoeus", "~> 1.4"
+
+gem "rufus-scheduler", "~> 3.9"
+
+gem "mail", "~> 2.8"
+
+gem "daemons", "~> 1.4"

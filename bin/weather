@@ -4,6 +4,8 @@ require 'bundler/setup'
 Bundler.require(:default)
 require_relative '../lib/weather'
 require_relative '../lib/batch_fetcher'
+require_relative '../lib/alert_service'
+require_relative '../lib/subscription_service'
 
 class WeatherCLI < Thor
   desc "check CITY", "Check weather for the specific city"
@@ -39,6 +41,94 @@ class WeatherCLI < Thor
         puts "Redis runtime: #{(stats[:uptime] / 60.0).round(1)} min".cyan
     end
   end
+
+
+  desc "subscribe EMAIL CITY", "Subscribe to City Weather Alerts"
+  def subscribe(email, city)
+    subscription = Weather::SubscriptionService.new
+    if subscription.subscribe(email, city)
+      puts "✅ #{email} has successfully subscribed to weather alerts for  #{city}".green
+    end
+  end
+  
+  desc "unsubscribe EMAIL CITY", "Unsubscribe from city weather alerts"
+  def unsubscribe(email, city)
+    subscription = Weather::SubscriptionService.new
+    if subscription.unsubscribe(email, city)
+      puts "✅ #{email} has unsubscribed from weather alerts for  #{city}".green
+    end
+  end
+  
+  desc "list_subscriptions EMAIL", "View the cities to which users are subscribed"
+  def list_subscriptions(email)
+    subscription = Weather::SubscriptionService.new
+    cities = subscription.cities_for_user(email)
+    
+    if cities.empty?
+      puts "📭 #{email} no cities subscribed".yellow
+    else
+      puts "📋 #{email} subscribed cities:".blue
+      cities.each_with_index do |city, index|
+        puts "  #{index+1}. #{city}".cyan
+      end
+    end
+  end
+  
+  desc "list_subscribers CITY", "View users in subscribed cities"
+  def list_subscribers(city)
+    subscription = Weather::SubscriptionService.new
+    emails = subscription.subscribers_for_city(city)
+    
+    if emails.empty?
+      puts "📭 No users subscribed #{city}".yellow
+    else
+      puts "📋 Subscribers to #{city}:".blue
+      emails.each_with_index do |email, index|
+        puts "  #{index+1}. #{email}".cyan
+      end
+    end
+  end
+  
+  desc "monitor CITY", "monitoring city weather alerts"
+  def monitor(city)
+    alert_service = Weather::AlertService.new
+    alert_service.monitor(city)
+    puts "🔍 Start monitoring #{city}".green
+    puts "Monitoring is already running in the background, press Ctrl+C to exit out".yellow
+    
+    # keep program to run
+    loop do
+      sleep 1
+    end
+  end
+  
+  desc "monitor_all", "Monitor all subscribed cities"
+  def monitor_all
+    alert_service = Weather::AlertService.new
+    alert_service.monitor_all_subscribed
+    
+    puts "Monitoring is already running in the background, press Ctrl+C to exit".yellow
+    loop do
+      sleep 1
+    end
+  end
+  
+  desc "check_alerts", "Check all monitored city weather alerts immediately"
+  def check_alerts
+    alert_service = Weather::AlertService.new
+    alert_service.monitor_all_subscribed
+    alert_service.check_all_now
+  end
+  
+  desc "test_alert EMAIL CITY", "Test sending alert emails to users"
+  def test_alert(email, city)
+    subscription = Weather::SubscriptionService.new
+    subscription.subscribe(email, city) unless subscription.subscribers_for_city(city).include?(email)
+    subscription.send_alert(city, "This is a test warning message, please ignore", "test")
+    puts "✅ Test alert email sent to #{email}".green
+  end
+
+
 
 
   desc "batch CITIES...", "Batch and concurrently check the weather of multiple cities"

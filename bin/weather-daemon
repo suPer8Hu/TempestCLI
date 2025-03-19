@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
+require 'daemons'
+require_relative '../lib/weather'
+require_relative '../lib/alert_service'
+
+Daemons.run_proc('weather-alert', :dir => 'tmp/pids', :dir_mode => :normal, :log_dir => 'logs', :log_output => true) do
+  begin
+    puts "Launch the weather warning daemon..."
+    alert_service = Weather::AlertService.new
+    alert_service.monitor_all_subscribed
+    
+    puts "The weather warning daemon has been initiated."
+    
+    # Check for new sub cities every hr
+    scheduler = Rufus::Scheduler.new
+    scheduler.every '1h' do
+      puts "Check new subscribed cities..."
+      alert_service.monitor_all_subscribed
+    end
+
+    loop do
+      sleep 10
+    end
+  rescue => e
+    puts "Daemon process error: #{e.message}"
+    puts e.backtrace
+  end
+end
