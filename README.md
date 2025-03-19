@@ -1,4 +1,4 @@
-# WeatherApp
+# TempestCLI
 
 A simple powerful command-line tool for retrieving weather forecasts using the OpenWeatherMap API, with features for monitoring and alerting.
 
